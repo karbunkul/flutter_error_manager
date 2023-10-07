@@ -26,66 +26,84 @@ class _DemoPageState extends State<DemoPage> {
         actions: [
           IconButton(
               onPressed: _onBugChange,
-              icon: const Icon(Icons.bug_report_outlined))
+              icon: const Icon(Icons.bug_report_outlined),)
         ],
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text('Change constraints for display behavior'),
-          ),
-          _ConstraintPicker(
-            value: _constraint,
-            onChanged: (value) => setState(() => _constraint = value),
-          ),
-          const SizedBox(height: 16),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+      body: Builder(builder: (context) {
+        return Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('Change constraints for display behavior'),
             ),
-            child: ConstrainedBox(
-              constraints: _constraints(),
-              child: ErrorBox(
-                error: _error,
-                handlers: [
-                  RetryErrorHandler<TimeoutError>(
-                    onRetry: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (_) {
-                            return const Center(
-                              child: Text('Ретрай мазафака'),
+            _ConstraintPicker(
+              value: _constraint,
+              onChanged: (value) => setState(() => _constraint = value),
+            ),
+            const SizedBox(height: 16),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              child: ConstrainedBox(
+                constraints: _constraints(),
+                child: Column(
+                  children: [
+                    ErrorBox(
+                      handlers: [
+                        MultiErrorHandler(
+                          types: [
+                            HandlerType<TypeError>(),
+                            // HandlerType<String>(),
+                          ],
+                        ),
+                      ],
+                      builder: (_) => Text(_error!.toString()),
+                    ),
+                    ErrorBox(
+                      error: _error,
+                      handlers: [
+                        RetryErrorHandler<TimeoutError>(
+                          onRetry: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (_) {
+                                return const Center(
+                                  child: Text('Ретрай мазафака'),
+                                );
+                              },
                             );
-                          });
-                    },
-                  ),
-                  const ErrorHandler<NotFoundError>()
-                ],
+                          },
+                        ),
+                        const ErrorHandler<NotFoundError>()
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const Spacer(),
-          SafeArea(
-            bottom: true,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: _onRunAction,
-                child: const SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'errorDisplay',
-                    textAlign: TextAlign.center,
+            const Spacer(),
+            SafeArea(
+              bottom: true,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: _onRunAction,
+                  child: const SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'errorDisplay',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 

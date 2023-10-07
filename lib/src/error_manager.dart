@@ -42,7 +42,7 @@ class ErrorManager extends StatelessWidget {
       defaultErrorView: defaultErrorView,
       defaultErrorLayout: defaultErrorLayout ?? const _DefaultErrorLayout(),
       defaultErrorAction: defaultErrorAction ?? const _DefaultErrorAction(),
-      child: ErrorBox(handlers: const [], child: child),
+      child: ErrorBox(handlers: const [], builder: (context) => child),
     );
   }
 }

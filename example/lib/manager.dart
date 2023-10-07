@@ -9,7 +9,9 @@ class _ErrorManager extends StatelessWidget {
   Widget build(BuildContext context) {
     return ErrorManager(
       debugMode: true,
-      onReport: (err, _) => print(err),
+      onReport: (err, st) {
+        log('on report', error: err, stackTrace: st);
+      },
       handlers: [
         const ErrorHandler<RequirementError>(),
         const ErrorHandler<NetworkError>(),

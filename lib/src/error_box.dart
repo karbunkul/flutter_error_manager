@@ -7,26 +7,32 @@ import 'error_view_scope.dart';
 
 @immutable
 class ErrorBox extends StatelessWidget {
-  final List<ErrorHandler> handlers;
+  final List<ErrorHandler>? handlers;
   final Object? error;
   final StackTrace? stackTrace;
 
-  final Widget? child;
+  final WidgetBuilder? builder;
 
   const ErrorBox({
     super.key,
-    required this.handlers,
+    this.handlers,
     this.error,
     this.stackTrace,
-    this.child,
+    this.builder,
   });
 
   @override
   Widget build(context) {
-    ErrorWidget.builder = _errorWidgetBuilder(context, handlers: handlers);
-
     if (error == null) {
-      return child ?? const SizedBox.shrink();
+      try {
+        return builder?.call(context) ?? const SizedBox.shrink();
+      } on Object catch (e, st) {
+        return _ErrorBox(
+          handlers: handlers,
+          error: e,
+          stackTrace: st,
+        );
+      }
     }
 
     return _ErrorBox(
@@ -35,29 +41,16 @@ class ErrorBox extends StatelessWidget {
       stackTrace: stackTrace,
     );
   }
-
-  ErrorWidgetBuilder _errorWidgetBuilder(
-    BuildContext context, {
-    required List<ErrorHandler> handlers,
-  }) {
-    return (details) {
-      return _ErrorBox(
-        handlers: handlers,
-        error: details.exception,
-        stackTrace: details.stack,
-      );
-    };
-  }
 }
 
 class _ErrorBox extends StatelessWidget {
-  final List<ErrorHandler> handlers;
+  final List<ErrorHandler>? handlers;
   final Object error;
   final StackTrace? stackTrace;
 
   const _ErrorBox({
-    required this.handlers,
     required this.error,
+    this.handlers,
     this.stackTrace,
   });
 
